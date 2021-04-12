@@ -17,10 +17,13 @@ function appendImage(image) {
 }
 
 //Fetching dog breeds (challenge 2)
-const breedUrl = 'https://dog.ceo/api/breeds/list/all'
-fetch(breedUrl)
-    .then(response => response.json())
-    .then(breeds => appendBreeds(getBreeds(breeds.message)))
+function fetchDogBreeds() {
+    const breedUrl = 'https://dog.ceo/api/breeds/list/all'
+    fetch(breedUrl)
+        .then(response => response.json())
+        .then(breeds => appendBreeds(getBreeds(breeds.message)))
+}
+fetchDogBreeds()
 
 function getBreeds(breeds) {
     breedsList = [];
@@ -44,3 +47,26 @@ function appendBreeds(breedsList) {
 function changeListColor(listItem) {
     listItem.style.color = 'red';
 }
+
+//Filtering breeds based on dropdown selection (Challenge 4)
+function filterBreeds(breedsList) {
+    const ul = document.getElementById("dog-breeds");
+    return breedsList.filter(breed => breed[0] === breedDropdown.value)
+}
+
+const breedDropdown = document.getElementById('breed-dropdown');
+breedDropdown.addEventListener('change', function () {
+    const ul = document.getElementById("dog-breeds");
+    ul.innerHTML = ''
+    const breedUrl = 'https://dog.ceo/api/breeds/list/all'
+    fetch(breedUrl)
+        .then(response => response.json())
+        .then(breeds => {
+            const breedsList = getBreeds(breeds.message)
+            let filteredBreeds = filterBreeds(breedsList)
+            appendBreeds(filteredBreeds)
+            if (breedDropdown.value === 'none') {
+                fetchDogBreeds()
+            }
+        })
+})
